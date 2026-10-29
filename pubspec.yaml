@@ -38,7 +38,8 @@ dependencies:
   firebase_auth: ^6.7.0
   cloud_firestore: ^6.10.0
   image_picker: ^1.2.3
-  flutter_ocr_identity_extractor: ^1.2.0
+  google_mlkit_text_recognition: ^0.14.0
+  google_mlkit_commons: ^0.9.0
   emailjs: ^4.0.0
   pinput: ^7.0.0
   firebase_app_check: ^0.4.9
