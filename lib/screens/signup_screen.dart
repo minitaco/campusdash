@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_ocr_identity_extractor/flutter_ocr_identity_extractor.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -159,11 +159,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
         return;
       }
 
-      final text = await OcrService.instance.recognizeTextFromPath(
-        pickedFile.path,
+      // --- NEW OCR LOGIC ---
+      final inputImage = InputImage.fromFilePath(pickedFile.path);
+      final textRecognizer = TextRecognizer(
+        script: TextRecognitionScript.latin,
       );
+      final recognizedText = await textRecognizer.processImage(inputImage);
 
-      if (text == null || text.isEmpty) {
+      final text = recognizedText.text;
+
+      if (text.isEmpty) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('No text found. Please try again.')),
