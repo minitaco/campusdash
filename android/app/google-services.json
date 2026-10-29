@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "472542036822",
+    "project_id": "campusdash-42174",
+    "storage_bucket": "campusdash-42174.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472542036822:android:f85253d22ad919bae08cf7",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkhVS8KeJfc0Smv_CQWrQ0IEFqBwo2eNo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
