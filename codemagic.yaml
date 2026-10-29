@@ -10,6 +10,8 @@ workflows:
     scripts:
       - name: Get Flutter packages
         script: flutter pub get
+      - name: Disable Swift Package Manager
+        script: flutter config --no-enable-swift-package-manager
       - name: Build iOS (No Codesign)
         script: |
           flutter build ipa --release --no-codesign
