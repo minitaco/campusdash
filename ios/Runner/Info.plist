@@ -66,5 +66,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+		<key>NSCameraUsageDescription</key>
+	<string>This app requires camera access to scan your student ID for verification.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires photo library access to upload proof or files for your errands.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app requires location access to pinpoint your parking location.</string>
 </dict>
 </plist>
