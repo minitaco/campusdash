@@ -14,6 +14,6 @@ workflows:
         script: flutter config --no-enable-swift-package-manager
       - name: Build iOS (No Codesign)
         script: |
-          flutter build ipa --release --no-codesign
+          flutter build ipa --release --no-codesign --export-method development
     artifacts:
       - build/ios/ipa/*.ipa
