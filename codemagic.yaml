@@ -10,10 +10,31 @@ workflows:
     scripts:
       - name: Get Flutter packages
         script: flutter pub get
+        
       - name: Disable Swift Package Manager
         script: flutter config --no-enable-swift-package-manager
+        
+      # --- NEW STEP ADDED HERE ---
+      - name: Create Export Options
+        script: |
+          echo '<?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>development</string>
+              <key>signingStyle</key>
+              <string>manual</string>
+          </dict>
+          </plist>' > /Users/builder/export_options.plist
+      # ----------------------------
+      
       - name: Build iOS (No Codesign)
         script: |
-          flutter build ipa --release --no-codesign --export-method development
+          # 1. Build the archive
+          flutter build ipa --release --no-codesign
+          
+          # 2. Force xcode-project to package the archive into an IPA
+          xcode-project build-ipa --archive build/ios/archive/Runner.xcarchive --export-options-plist /Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
