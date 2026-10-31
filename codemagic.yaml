@@ -35,6 +35,6 @@ workflows:
           flutter build ipa --release --no-codesign
           
           # 2. Force xcode-project to package the archive into an IPA
-          xcode-project build-ipa --archive-directory build/ios/archive --export-options-plist /Users/builder/export_options.plist
+          xcode-project build-ipa --workspace ios/Runner.xcworkspace --archive-directory build/ios/archive --export-options-plist /Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
