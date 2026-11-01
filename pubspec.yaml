@@ -45,7 +45,7 @@ dependencies:
   firebase_app_check: ^0.4.9
   cloudinary_made_easy: ^0.1.2
   firebase_storage: ^13.6.1
-  url_launcher: ^6.3.3
+  url_launcher: ^6.3.2
   flutter_map: ^8.3.2
   latlong2: ^0.10.1
   geolocator: ^14.1.2
