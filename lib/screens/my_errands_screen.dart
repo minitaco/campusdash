@@ -555,10 +555,20 @@ class _MyErrandsScreenState extends State<MyErrandsScreen> {
             const SizedBox(height: 16),
             const Divider(height: 1, color: Color(0xFFEEF1F7)),
             const SizedBox(height: 12),
+
+            // --- CHAT CONTAINER FIX ---
             if (_expandedChatDocId == docId) ...[
-              SizedBox(
-                height:
-                    MediaQuery.of(context).size.height * 0.8, // <-- Made bigger
+              Container(
+                margin: const EdgeInsets.only(top: 8, bottom: 8),
+                height: 500, // Fixed height to prevent keyboard issues
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEEF1F7),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: const Color(0xFF1B2A5E),
+                    width: 1.5,
+                  ),
+                ),
                 child: ChatScreen(
                   errandId: docId,
                   otherUserName: posterName,

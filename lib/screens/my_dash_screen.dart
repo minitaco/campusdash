@@ -26,7 +26,6 @@ class _MyDashScreenState extends State<MyDashScreen> {
   final _locationController = TextEditingController();
   final _serviceFeeController = TextEditingController();
 
-  // Changed to String? instead of TextEditingController
   String? _classStart;
   String? _classEnd;
 
@@ -56,9 +55,7 @@ class _MyDashScreenState extends State<MyDashScreen> {
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFF1B2A5E), // Navy color for the picker
-            ),
+            colorScheme: const ColorScheme.light(primary: Color(0xFF1B2A5E)),
           ),
           child: child!,
         );
@@ -67,7 +64,6 @@ class _MyDashScreenState extends State<MyDashScreen> {
 
     if (picked != null) {
       setState(() {
-        // Format the time to a readable string (e.g., "08:30 AM")
         final formattedTime = picked.format(context);
         if (isStartTime) {
           _classStart = formattedTime;
@@ -99,7 +95,6 @@ class _MyDashScreenState extends State<MyDashScreen> {
       return;
     }
 
-    // Extra validation for Parking schedule
     if (_requestType == 'Parking' &&
         (_classStart == null || _classEnd == null)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -170,7 +165,6 @@ class _MyDashScreenState extends State<MyDashScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) throw 'User not logged in';
 
-      // 1. GET GPS LOCATION IF PARKING
       double? lat;
       double? lng;
 
@@ -190,7 +184,6 @@ class _MyDashScreenState extends State<MyDashScreen> {
         lng = position.longitude;
       }
 
-      // 2. Upload file to Cloudinary if it's a Printing request
       String? fileUrl;
       if (_requestType == 'Printing' && _uploadedFile != null) {
         final response = await _cloudinary.uploadFile(
@@ -213,7 +206,6 @@ class _MyDashScreenState extends State<MyDashScreen> {
       final lastName = userDoc.data()?['lastName'] ?? '';
       final phone = userDoc.data()?['phone'] ?? 'No phone';
 
-      // 3. Save to Firestore
       await FirebaseFirestore.instance.collection('errands').add({
         'userId': user.uid,
         'authorName': '$firstName $lastName',
@@ -811,10 +803,20 @@ class _MyDashScreenState extends State<MyDashScreen> {
             const SizedBox(height: 16),
             const Divider(height: 1, color: Color(0xFFEEF1F7)),
             const SizedBox(height: 12),
+
+            // --- CHAT CONTAINER FIX ---
             if (_expandedChatDocId == docId) ...[
-              SizedBox(
-                height:
-                    MediaQuery.of(context).size.height * 0.8, // <-- Made bigger
+              Container(
+                margin: const EdgeInsets.only(top: 8, bottom: 8),
+                height: 500, // Fixed height to prevent keyboard issues
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEEF1F7),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: const Color(0xFF1B2A5E),
+                    width: 1.5,
+                  ),
+                ),
                 child: ChatScreen(
                   errandId: docId,
                   otherUserName: acceptedByName,
@@ -909,7 +911,6 @@ class _MyDashScreenState extends State<MyDashScreen> {
     );
   }
 
-  // ---------- Custom Time Field Widget ----------
   Widget _buildTimeField({
     required String label,
     required VoidCallback onTap,
