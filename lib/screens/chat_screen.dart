@@ -8,7 +8,7 @@ class ChatScreen extends StatefulWidget {
   final String otherUserPhone;
   final String otherUserId;
   final String location;
-  final VoidCallback onClose; // Callback to notify parent to close chat
+  final VoidCallback onClose;
 
   const ChatScreen({
     super.key,
@@ -55,7 +55,6 @@ class _ChatScreenState extends State<ChatScreen> {
             'createdAt': FieldValue.serverTimestamp(),
           });
 
-      // Auto-scroll to bottom after sending
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
@@ -80,6 +79,8 @@ class _ChatScreenState extends State<ChatScreen> {
         : 'U';
 
     return Container(
+      width: double.infinity,
+      height: double.infinity, // <-- This makes it fill the parent size
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -98,7 +99,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     size: 20,
                     color: Color(0xFF1B2A5E),
                   ),
-                  // Call the parent's onClose function instead of Navigator.pop
                   onPressed: widget.onClose,
                 ),
                 const Text(

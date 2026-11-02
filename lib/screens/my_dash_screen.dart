@@ -226,8 +226,8 @@ class _MyDashScreenState extends State<MyDashScreen> {
         'createdAt': FieldValue.serverTimestamp(),
         'status': 'Waiting',
         if (_requestType == 'Parking') ...{
-          'classStart': _classStart ?? '', // Save the string from time picker
-          'classEnd': _classEnd ?? '', // Save the string from time picker
+          'classStart': _classStart ?? '',
+          'classEnd': _classEnd ?? '',
           'latitude': lat,
           'longitude': lng,
         },
@@ -263,7 +263,6 @@ class _MyDashScreenState extends State<MyDashScreen> {
 
   // ---------- Delete Request ----------
   Future<void> _confirmAndDelete(String docId) async {
-    // ... (Keep your existing delete logic) ...
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -633,7 +632,6 @@ class _MyDashScreenState extends State<MyDashScreen> {
     );
   }
 
-  // ... (Keep _buildRequestCard exactly as it is) ...
   Widget _buildRequestCard(Map<String, dynamic> data, String docId) {
     final String name = data['authorName'] ?? 'User';
     final String requestType = data['requestType'] ?? '';
@@ -815,7 +813,8 @@ class _MyDashScreenState extends State<MyDashScreen> {
             const SizedBox(height: 12),
             if (_expandedChatDocId == docId) ...[
               SizedBox(
-                height: 400,
+                height:
+                    MediaQuery.of(context).size.height * 0.8, // <-- Made bigger
                 child: ChatScreen(
                   errandId: docId,
                   otherUserName: acceptedByName,

@@ -10,10 +10,10 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  // Default values in case the user hasn't set them yet
   bool _showGeneral = true;
   bool _showUrgent = true;
   bool _isLoading = true;
+  String _greetingName = 'Student';
 
   @override
   void initState() {
@@ -33,11 +33,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .collection('users')
           .doc(user.uid)
           .get();
+
       if (doc.exists) {
         final data = doc.data()!;
         setState(() {
           _showGeneral = data['notifGeneral'] ?? true;
           _showUrgent = data['notifUrgent'] ?? true;
+
+          // Get the real first name for the greeting
+          final firstName = (data['firstName'] ?? '').toString().trim();
+          if (firstName.isNotEmpty) {
+            _greetingName = firstName;
+          }
         });
       }
     } catch (e) {
@@ -50,8 +57,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final displayName = user?.email?.split('@').first ?? 'Student';
-    final capitalized = displayName[0].toUpperCase() + displayName.substring(1);
 
     return Scaffold(
       backgroundColor: const Color(0xFFEEF1F7),
@@ -81,7 +86,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'Hi, $capitalized!',
+                          'Hi, $_greetingName!',
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
@@ -112,7 +117,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       const Center(child: CircularProgressIndicator())
                     else ...[
                       // --- Stream 1: Someone accepted YOUR errand ---
-                      // Only show if General Notifications are ON
                       if (_showGeneral)
                         StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
@@ -149,7 +153,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         ),
 
                       // --- Stream 2: Urgent errands posted by others ---
-                      // Only show if Urgent Notifications are ON
                       if (_showUrgent)
                         StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
@@ -174,28 +177,54 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             return Column(
                               children: docs.map((doc) {
                                 final data = doc.data() as Map<String, dynamic>;
-                                final posterName =
-                                    data['authorName'] ?? 'Someone';
-                                final initial = posterName.isNotEmpty
-                                    ? posterName[0].toUpperCase()
-                                    : 'U';
-                                final requestType =
-                                    data['requestType'] ?? 'errand';
 
-                                return _buildNotificationItem(
-                                  initial: initial,
-                                  title: '$posterName has uploaded an',
-                                  subtitle: 'urgent $requestType',
-                                  time: 'Just now',
-                                  titleColor: const Color(0xFF0E0E0E),
-                                  subtitleColor: Colors.red,
+                                // Fetch the real name from the users collection
+                                return FutureBuilder<DocumentSnapshot>(
+                                  future: FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(data['userId'])
+                                      .get(),
+                                  builder: (context, userSnapshot) {
+                                    String posterName =
+                                        data['authorName'] ?? 'Someone';
+                                    if (userSnapshot.hasData &&
+                                        userSnapshot.data!.exists) {
+                                      final uData =
+                                          userSnapshot.data!.data()
+                                              as Map<String, dynamic>;
+                                      final first = (uData['firstName'] ?? '')
+                                          .toString()
+                                          .trim();
+                                      final last = (uData['lastName'] ?? '')
+                                          .toString()
+                                          .trim();
+                                      if (first.isNotEmpty) {
+                                        posterName =
+                                            '$first ${last.isNotEmpty ? last[0] : ''}.';
+                                      }
+                                    }
+
+                                    final initial = posterName.isNotEmpty
+                                        ? posterName[0].toUpperCase()
+                                        : 'U';
+                                    final requestType =
+                                        data['requestType'] ?? 'errand';
+
+                                    return _buildNotificationItem(
+                                      initial: initial,
+                                      title: '$posterName has uploaded an',
+                                      subtitle: 'urgent $requestType',
+                                      time: 'Just now',
+                                      titleColor: const Color(0xFF0E0E0E),
+                                      subtitleColor: Colors.red,
+                                    );
+                                  },
                                 );
                               }).toList(),
                             );
                           },
                         ),
 
-                      // If all toggles are off, show a friendly message
                       if (!_showGeneral && !_showUrgent)
                         const Center(
                           child: Padding(

@@ -99,7 +99,6 @@ class _MyErrandsScreenState extends State<MyErrandsScreen> {
 
   // ---------- Cancel Errand Logic ----------
   Future<void> _confirmAndCancel(String docId) async {
-    // ... (Keep your existing cancel logic) ...
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -558,7 +557,8 @@ class _MyErrandsScreenState extends State<MyErrandsScreen> {
             const SizedBox(height: 12),
             if (_expandedChatDocId == docId) ...[
               SizedBox(
-                height: 400,
+                height:
+                    MediaQuery.of(context).size.height * 0.8, // <-- Made bigger
                 child: ChatScreen(
                   errandId: docId,
                   otherUserName: posterName,

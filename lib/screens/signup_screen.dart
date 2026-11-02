@@ -345,7 +345,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Please use your MMCL email (@live.mcl.edu.ph) or a Gmail for demo.',
+            'Please use your MMCL email (@live.mcl.edu.ph) or a Gmail.',
           ),
           backgroundColor: Color(0xFFE63946),
         ),
@@ -582,7 +582,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(height: 14),
 
               _buildLabeledField(
-                label: 'Email Address (Gmail for demo)',
+                label: 'Email Address',
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
               ),
