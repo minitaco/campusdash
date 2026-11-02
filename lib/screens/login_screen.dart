@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Email field
               _buildTextField(
                 controller: _emailController,
-                hint: 'MMCL Email Address',
+                hint: 'Email Address',
                 keyboardType: TextInputType.emailAddress,
               ),
 

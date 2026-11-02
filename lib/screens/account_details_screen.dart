@@ -113,7 +113,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                           child: Column(
                             children: [
                               _buildInfoTile(
-                                title: 'Verify Email',
+                                title: 'Verified Email',
                                 subtitle: _email,
                               ),
                               const Divider(
@@ -121,7 +121,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                                 color: Color(0xFFEEF1F7),
                               ),
                               _buildInfoTile(
-                                title: 'Update Phone',
+                                title: 'Phone Number',
                                 subtitle: _phone,
                               ),
                               const Divider(
@@ -129,7 +129,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                                 color: Color(0xFFEEF1F7),
                               ),
                               _buildInfoTile(
-                                title: 'Campus Association',
+                                title: 'Campus Student ID',
                                 subtitle: _campusId,
                               ),
                             ],

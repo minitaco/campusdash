@@ -19,6 +19,17 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   String? _selectedCategory;
 
+  // --- Search Logic Variables ---
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+  // ------------------------------
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -116,6 +127,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     // ------------------------------------
 
                     const SizedBox(height: 20),
+
+                    // ---------- Search Bar ----------
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       height: 52,
@@ -123,13 +136,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(26),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.search, color: Color(0xFF9AA2B8)),
-                          SizedBox(width: 10),
+                          const Icon(Icons.search, color: Color(0xFF9AA2B8)),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: TextField(
-                              decoration: InputDecoration(
+                              controller: _searchController,
+                              onChanged: (value) {
+                                setState(() {
+                                  _searchQuery = value.toLowerCase();
+                                });
+                              },
+                              decoration: const InputDecoration(
                                 hintText: 'Search for active campus errands...',
                                 hintStyle: TextStyle(
                                   color: Color(0xFF9AA2B8),
@@ -139,10 +158,25 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
+                          if (_searchQuery.isNotEmpty)
+                            GestureDetector(
+                              onTap: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _searchQuery = '';
+                                });
+                              },
+                              child: const Icon(
+                                Icons.close,
+                                size: 18,
+                                color: Color(0xFF9AA2B8),
+                              ),
+                            ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 20),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -322,10 +356,31 @@ class _HomeScreenState extends State<HomeScreen> {
         }
 
         final docs = snapshot.data?.docs ?? [];
-        final otherUsersDocs = docs.where((doc) {
+
+        // Filter out the current user's own posts
+        var otherUsersDocs = docs.where((doc) {
           final data = doc.data() as Map<String, dynamic>;
           return data['userId'] != user?.uid;
         }).toList();
+
+        // --- SEARCH FILTER LOGIC ---
+        if (_searchQuery.isNotEmpty) {
+          otherUsersDocs = otherUsersDocs.where((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            final requestType = (data['requestType'] ?? '')
+                .toString()
+                .toLowerCase();
+            final location = (data['location'] ?? '').toString().toLowerCase();
+            final info = (data['additionalInfo'] ?? '')
+                .toString()
+                .toLowerCase();
+
+            return requestType.contains(_searchQuery) ||
+                location.contains(_searchQuery) ||
+                info.contains(_searchQuery);
+          }).toList();
+        }
+        // ---------------------------
 
         if (otherUsersDocs.isEmpty) {
           return Container(
@@ -351,9 +406,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'No active errands',
-                  style: TextStyle(
+                Text(
+                  _searchQuery.isNotEmpty
+                      ? 'No results found'
+                      : 'No active errands',
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF1B2A5E),
@@ -361,7 +418,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  _selectedCategory == null
+                  _searchQuery.isNotEmpty
+                      ? 'Try searching for a different keyword.'
+                      : _selectedCategory == null
                       ? 'New requests will appear here.\nCheck back in a moment!'
                       : 'No $_selectedCategory requests available right now.',
                   textAlign: TextAlign.center,
